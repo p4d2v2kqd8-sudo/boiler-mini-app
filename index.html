@@ -6,76 +6,444 @@
   <title>Boilersteuerung</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
+    :root {
+      --bg: #101216;
+      --card: #1b1f27;
+      --card2: #242a35;
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+      --border: #333a46;
+      --accent: #f59e0b;
+      --danger: #ef4444;
+      --ok: #22c55e;
+      --blue: #38bdf8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: system-ui, sans-serif;
-      padding: 16px;
-      background: #111;
-      color: white;
+      margin: 0;
+      padding: 10px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
     }
+
     h1 {
-      font-size: 22px;
+      font-size: 18px;
+      margin: 4px 0 10px 0;
+      line-height: 1.2;
     }
-    .card {
-      background: #222;
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 14px;
+
+    .top {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
     }
+
     button {
-      width: 100%;
-      padding: 14px;
-      margin: 6px 0;
       border: 0;
       border-radius: 10px;
-      font-size: 16px;
+      padding: 9px 6px;
+      font-size: 13px;
+      font-weight: 650;
+      color: white;
+      background: var(--card2);
+      min-height: 38px;
+    }
+
+    button:active {
+      transform: scale(0.98);
+      opacity: 0.85;
+    }
+
+    .danger {
+      background: var(--danger);
+    }
+
+    .solar {
+      background: var(--ok);
+    }
+
+    .on {
+      background: var(--accent);
+    }
+
+    .status {
+      background: var(--blue);
+    }
+
+    .panel {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 82px repeat(5, 1fr);
+      gap: 5px;
+      align-items: center;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 7px;
+    }
+
+    .name {
+      font-weight: 750;
+      font-size: 13px;
+      line-height: 1.1;
+    }
+
+    .small {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .mini {
+      padding: 7px 4px;
+      min-height: 34px;
+      font-size: 12px;
+      border-radius: 9px;
+    }
+
+    .footer {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 11px;
+      text-align: center;
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.72);
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      z-index: 10;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 420px;
+      background: #171b22;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    .modal h2 {
+      margin: 0 0 10px 0;
+      font-size: 18px;
+    }
+
+    .section {
+      margin: 10px 0;
+    }
+
+    .label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .seg {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .seg button {
+      background: var(--card2);
+    }
+
+    .seg button.active {
+      outline: 2px solid var(--blue);
+      background: #0f3b4d;
+    }
+
+    .picker {
+      display: grid;
+      grid-template-columns: 44px 1fr 44px;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .value {
+      background: var(--card2);
+      border-radius: 10px;
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      font-weight: 750;
+    }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .primary {
+      background: var(--blue);
+    }
+
+    .cancel {
+      background: #3f3f46;
+    }
+
+    @media (max-width: 360px) {
+      body {
+        padding: 7px;
+      }
+
+      .row {
+        grid-template-columns: 74px repeat(5, 1fr);
+        gap: 4px;
+        padding: 6px;
+      }
+
+      .mini {
+        font-size: 11px;
+        padding: 6px 3px;
+      }
+
+      .name {
+        font-size: 12px;
+      }
     }
   </style>
 </head>
+
 <body>
   <h1>Boilersteuerung</h1>
 
-  <div class="card">
-    <h2>Boiler Bad</h2>
-    <button onclick="send('/boiler_bad_aufheizen')">🔥 Aufheizen</button>
-    <button onclick="send('/boiler_bad_solar')">☀️ Solar</button>
-    <button onclick="send('/boiler_bad_an')">AN</button>
-    <button onclick="send('/boiler_bad_aus')">AUS</button>
+  <div class="top">
+    <button class="status" onclick="send('/boiler_status')">Status</button>
+    <button class="solar" onclick="send('/boiler_solar')">Alle Solar</button>
+    <button class="on" onclick="send('/boiler_an')">Alle AN</button>
+    <button class="danger" onclick="send('/boiler_aus')">Alle AUS</button>
   </div>
 
-  <div class="card">
-    <h2>Boiler Dusche</h2>
-    <button onclick="send('/boiler_dusche_aufheizen')">🔥 Aufheizen</button>
-    <button onclick="send('/boiler_dusche_solar')">☀️ Solar</button>
-    <button onclick="send('/boiler_dusche_an')">AN</button>
-    <button onclick="send('/boiler_dusche_aus')">AUS</button>
+  <div class="panel">
+    <div class="row">
+      <div>
+        <div class="name">Bad</div>
+        <div class="small">Boiler</div>
+      </div>
+      <button class="mini danger" onclick="send('/boiler_bad_aus')">AUS</button>
+      <button class="mini solar" onclick="send('/boiler_bad_solar')">Solar</button>
+      <button class="mini on" onclick="send('/boiler_bad_an')">AN</button>
+      <button class="mini" onclick="send('/boiler_bad_aufheizen')">🔥</button>
+      <button class="mini" onclick="openSchedule('bad', 'Bad')">⏱</button>
+    </div>
+
+    <div class="row">
+      <div>
+        <div class="name">Dusche</div>
+        <div class="small">Boiler</div>
+      </div>
+      <button class="mini danger" onclick="send('/boiler_dusche_aus')">AUS</button>
+      <button class="mini solar" onclick="send('/boiler_dusche_solar')">Solar</button>
+      <button class="mini on" onclick="send('/boiler_dusche_an')">AN</button>
+      <button class="mini" onclick="send('/boiler_dusche_aufheizen')">🔥</button>
+      <button class="mini" onclick="openSchedule('dusche', 'Dusche')">⏱</button>
+    </div>
+
+    <div class="row">
+      <div>
+        <div class="name">Küche</div>
+        <div class="small">Boiler</div>
+      </div>
+      <button class="mini danger" onclick="send('/boiler_kueche_aus')">AUS</button>
+      <button class="mini solar" onclick="send('/boiler_kueche_solar')">Solar</button>
+      <button class="mini on" onclick="send('/boiler_kueche_an')">AN</button>
+      <button class="mini" onclick="send('/boiler_kueche_aufheizen')">🔥</button>
+      <button class="mini" onclick="openSchedule('kueche', 'Küche')">⏱</button>
+    </div>
   </div>
 
-  <div class="card">
-    <h2>Boiler Küche</h2>
-    <button onclick="send('/boiler_kueche_aufheizen')">🔥 Aufheizen</button>
-    <button onclick="send('/boiler_kueche_solar')">☀️ Solar</button>
-    <button onclick="send('/boiler_kueche_an')">AN</button>
-    <button onclick="send('/boiler_kueche_aus')">AUS</button>
+  <div class="top" style="margin-top:10px;">
+    <button onclick="send('/boiler_status_24h')">24h Status</button>
+    <button onclick="send('/boiler_status_alle')">Alles melden</button>
+    <button onclick="send('/boiler_status_nein')">Stumm</button>
+    <button onclick="send('/hilfe')">Hilfe</button>
   </div>
 
-  <div class="card">
-    <h2>Global</h2>
-    <button onclick="send('/boiler_status')">📊 Status</button>
-    <button onclick="send('/boiler_solar')">☀️ Alle Solar</button>
-    <button onclick="send('/boiler_an')">🔥 Alle AN</button>
-    <button onclick="send('/boiler_aus')">⏹️ Alle AUS</button>
+  <div class="footer">
+    Tipp: ⏱ öffnet Zeit/Dauer-Auswahl.
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <h2 id="modalTitle">Zeitfunktion</h2>
+
+      <div class="section">
+        <div class="label">Aktion</div>
+        <div class="seg">
+          <button id="actionHeat" class="active" onclick="setAction('aufheizen')">Aufheizen</button>
+          <button id="actionOn" onclick="setAction('stunden_an')">Stunden AN</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="label">Uhrzeit</div>
+        <div class="picker">
+          <button onclick="changeHour(-1)">−</button>
+          <div class="value" id="hourValue">18:00</div>
+          <button onclick="changeHour(1)">+</button>
+        </div>
+      </div>
+
+      <div class="section" id="durationSection">
+        <div class="label">Dauer</div>
+        <div class="picker">
+          <button onclick="changeDuration(-1)">−</button>
+          <div class="value" id="durationValue">2 h</div>
+          <button onclick="changeDuration(1)">+</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="label">Wiederholung</div>
+        <div class="seg">
+          <button id="repeatOnce" class="active" onclick="setRepeat(false)">Einmalig</button>
+          <button id="repeatAlways" onclick="setRepeat(true)">Täglich</button>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="cancel" onclick="closeSchedule()">Abbrechen</button>
+        <button class="primary" onclick="submitSchedule()">Starten</button>
+      </div>
+    </div>
   </div>
 
   <script>
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
+    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+
+    if (tg) {
+      tg.ready();
+      tg.expand();
+    }
+
+    let currentBoiler = 'bad';
+    let currentBoilerLabel = 'Bad';
+    let currentAction = 'aufheizen';
+    let currentHour = 18;
+    let currentDuration = 2;
+    let currentRepeat = false;
 
     function send(command) {
+      if (!tg) {
+        alert(command);
+        return;
+      }
+
       tg.sendData(JSON.stringify({
         command: command
       }));
-      tg.close();
+    }
+
+    function openSchedule(key, label) {
+      currentBoiler = key;
+      currentBoilerLabel = label;
+      currentAction = 'aufheizen';
+      currentHour = 18;
+      currentDuration = 2;
+      currentRepeat = false;
+
+      document.getElementById('modalTitle').textContent = label + ' Zeitfunktion';
+      updateModal();
+
+      document.getElementById('overlay').style.display = 'flex';
+    }
+
+    function closeSchedule() {
+      document.getElementById('overlay').style.display = 'none';
+    }
+
+    function setAction(action) {
+      currentAction = action;
+      updateModal();
+    }
+
+    function setRepeat(repeat) {
+      currentRepeat = repeat;
+      updateModal();
+    }
+
+    function changeHour(delta) {
+      currentHour += delta;
+
+      if (currentHour < 0) {
+        currentHour = 23;
+      }
+
+      if (currentHour > 23) {
+        currentHour = 0;
+      }
+
+      updateModal();
+    }
+
+    function changeDuration(delta) {
+      currentDuration += delta;
+
+      if (currentDuration < 1) {
+        currentDuration = 1;
+      }
+
+      if (currentDuration > 24) {
+        currentDuration = 24;
+      }
+
+      updateModal();
+    }
+
+    function updateModal() {
+      document.getElementById('hourValue').textContent = String(currentHour).padStart(2, '0') + ':00';
+      document.getElementById('durationValue').textContent = currentDuration + ' h';
+
+      document.getElementById('actionHeat').classList.toggle('active', currentAction === 'aufheizen');
+      document.getElementById('actionOn').classList.toggle('active', currentAction === 'stunden_an');
+
+      document.getElementById('repeatOnce').classList.toggle('active', currentRepeat === false);
+      document.getElementById('repeatAlways').classList.toggle('active', currentRepeat === true);
+
+      document.getElementById('durationSection').style.display =
+        currentAction === 'stunden_an' ? 'block' : 'none';
+    }
+
+    function submitSchedule() {
+      let cmd = '/boiler_' + currentBoiler + '_';
+
+      if (currentRepeat) {
+        cmd += 'immer_';
+      }
+
+      cmd += currentHour + '_uhr_';
+
+      if (currentAction === 'aufheizen') {
+        cmd += 'aufheizen';
+      } else {
+        cmd += currentDuration + '_stunden_an';
+      }
+
+      send(cmd);
+      closeSchedule();
     }
   </script>
 </body>
