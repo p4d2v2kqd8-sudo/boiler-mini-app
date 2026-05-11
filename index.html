@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Boilersteuerung</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      padding: 16px;
+      background: #111;
+      color: white;
+    }
+    h1 {
+      font-size: 22px;
+    }
+    .card {
+      background: #222;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      margin: 6px 0;
+      border: 0;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Boilersteuerung</h1>
+
+  <div class="card">
+    <h2>Boiler Bad</h2>
+    <button onclick="send('/boiler_bad_aufheizen')">🔥 Aufheizen</button>
+    <button onclick="send('/boiler_bad_solar')">☀️ Solar</button>
+    <button onclick="send('/boiler_bad_an')">AN</button>
+    <button onclick="send('/boiler_bad_aus')">AUS</button>
+  </div>
+
+  <div class="card">
+    <h2>Boiler Dusche</h2>
+    <button onclick="send('/boiler_dusche_aufheizen')">🔥 Aufheizen</button>
+    <button onclick="send('/boiler_dusche_solar')">☀️ Solar</button>
+    <button onclick="send('/boiler_dusche_an')">AN</button>
+    <button onclick="send('/boiler_dusche_aus')">AUS</button>
+  </div>
+
+  <div class="card">
+    <h2>Boiler Küche</h2>
+    <button onclick="send('/boiler_kueche_aufheizen')">🔥 Aufheizen</button>
+    <button onclick="send('/boiler_kueche_solar')">☀️ Solar</button>
+    <button onclick="send('/boiler_kueche_an')">AN</button>
+    <button onclick="send('/boiler_kueche_aus')">AUS</button>
+  </div>
+
+  <div class="card">
+    <h2>Global</h2>
+    <button onclick="send('/boiler_status')">📊 Status</button>
+    <button onclick="send('/boiler_solar')">☀️ Alle Solar</button>
+    <button onclick="send('/boiler_an')">🔥 Alle AN</button>
+    <button onclick="send('/boiler_aus')">⏹️ Alle AUS</button>
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+
+    function send(command) {
+      tg.sendData(JSON.stringify({
+        command: command
+      }));
+      tg.close();
+    }
+  </script>
+</body>
+</html>
