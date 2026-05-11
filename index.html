@@ -9,14 +9,11 @@
     :root {
       --bg: #101216;
       --card: #1b1f27;
-      --card2: #242a35;
+      --button: #242a35;
       --text: #f4f4f5;
       --muted: #a1a1aa;
       --border: #333a46;
-      --accent: #f59e0b;
-      --danger: #ef4444;
-      --ok: #22c55e;
-      --blue: #38bdf8;
+      --active: #38bdf8;
     }
 
     * {
@@ -38,22 +35,15 @@
       line-height: 1.2;
     }
 
-    .top {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      margin-bottom: 10px;
-    }
-
     button {
-      border: 0;
+      border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 9px 6px;
-      font-size: 13px;
+      padding: 8px 4px;
+      font-size: 14px;
       font-weight: 650;
-      color: white;
-      background: var(--card2);
-      min-height: 38px;
+      color: var(--text);
+      background: var(--button);
+      min-height: 36px;
     }
 
     button:active {
@@ -61,20 +51,11 @@
       opacity: 0.85;
     }
 
-    .danger {
-      background: var(--danger);
-    }
-
-    .solar {
-      background: var(--ok);
-    }
-
-    .on {
-      background: var(--accent);
-    }
-
-    .status {
-      background: var(--blue);
+    .top {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
     }
 
     .panel {
@@ -85,7 +66,7 @@
 
     .row {
       display: grid;
-      grid-template-columns: 82px repeat(5, 1fr);
+      grid-template-columns: 78px repeat(5, 1fr);
       gap: 5px;
       align-items: center;
       background: var(--card);
@@ -107,17 +88,25 @@
     }
 
     .mini {
-      padding: 7px 4px;
       min-height: 34px;
-      font-size: 12px;
-      border-radius: 9px;
+      font-size: 16px;
+      padding: 6px 2px;
     }
 
-    .footer {
-      margin-top: 9px;
+    .legend {
+      margin-top: 10px;
+      padding: 9px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--card);
       color: var(--muted);
-      font-size: 11px;
-      text-align: center;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .legend b {
+      color: var(--text);
+      font-weight: 700;
     }
 
     .overlay {
@@ -162,13 +151,9 @@
       gap: 6px;
     }
 
-    .seg button {
-      background: var(--card2);
-    }
-
     .seg button.active {
-      outline: 2px solid var(--blue);
-      background: #0f3b4d;
+      outline: 2px solid var(--active);
+      background: #0f2f3c;
     }
 
     .picker {
@@ -179,7 +164,8 @@
     }
 
     .value {
-      background: var(--card2);
+      background: var(--button);
+      border: 1px solid var(--border);
       border-radius: 10px;
       min-height: 38px;
       display: flex;
@@ -196,28 +182,19 @@
       margin-top: 12px;
     }
 
-    .primary {
-      background: var(--blue);
-    }
-
-    .cancel {
-      background: #3f3f46;
-    }
-
     @media (max-width: 360px) {
       body {
         padding: 7px;
       }
 
       .row {
-        grid-template-columns: 74px repeat(5, 1fr);
+        grid-template-columns: 70px repeat(5, 1fr);
         gap: 4px;
         padding: 6px;
       }
 
       .mini {
-        font-size: 11px;
-        padding: 6px 3px;
+        font-size: 15px;
       }
 
       .name {
@@ -231,10 +208,10 @@
   <h1>Boilersteuerung</h1>
 
   <div class="top">
-    <button class="status" onclick="send('/boiler_status')">Status</button>
-    <button class="solar" onclick="send('/boiler_solar')">Alle Solar</button>
-    <button class="on" onclick="send('/boiler_an')">Alle AN</button>
-    <button class="danger" onclick="send('/boiler_aus')">Alle AUS</button>
+    <button onclick="send('/boiler_status')">📊</button>
+    <button onclick="send('/boiler_solar')">☀️☀️</button>
+    <button onclick="send('/boiler_an')">🔛🔛</button>
+    <button onclick="send('/boiler_aus')">⏹⏹</button>
   </div>
 
   <div class="panel">
@@ -243,9 +220,9 @@
         <div class="name">Bad</div>
         <div class="small">Boiler</div>
       </div>
-      <button class="mini danger" onclick="send('/boiler_bad_aus')">AUS</button>
-      <button class="mini solar" onclick="send('/boiler_bad_solar')">Solar</button>
-      <button class="mini on" onclick="send('/boiler_bad_an')">AN</button>
+      <button class="mini" onclick="send('/boiler_bad_aus')">⏹</button>
+      <button class="mini" onclick="send('/boiler_bad_solar')">☀️</button>
+      <button class="mini" onclick="send('/boiler_bad_an')">🔛</button>
       <button class="mini" onclick="send('/boiler_bad_aufheizen')">🔥</button>
       <button class="mini" onclick="openSchedule('bad', 'Bad')">⏱</button>
     </div>
@@ -255,9 +232,9 @@
         <div class="name">Dusche</div>
         <div class="small">Boiler</div>
       </div>
-      <button class="mini danger" onclick="send('/boiler_dusche_aus')">AUS</button>
-      <button class="mini solar" onclick="send('/boiler_dusche_solar')">Solar</button>
-      <button class="mini on" onclick="send('/boiler_dusche_an')">AN</button>
+      <button class="mini" onclick="send('/boiler_dusche_aus')">⏹</button>
+      <button class="mini" onclick="send('/boiler_dusche_solar')">☀️</button>
+      <button class="mini" onclick="send('/boiler_dusche_an')">🔛</button>
       <button class="mini" onclick="send('/boiler_dusche_aufheizen')">🔥</button>
       <button class="mini" onclick="openSchedule('dusche', 'Dusche')">⏱</button>
     </div>
@@ -267,23 +244,25 @@
         <div class="name">Küche</div>
         <div class="small">Boiler</div>
       </div>
-      <button class="mini danger" onclick="send('/boiler_kueche_aus')">AUS</button>
-      <button class="mini solar" onclick="send('/boiler_kueche_solar')">Solar</button>
-      <button class="mini on" onclick="send('/boiler_kueche_an')">AN</button>
+      <button class="mini" onclick="send('/boiler_kueche_aus')">⏹</button>
+      <button class="mini" onclick="send('/boiler_kueche_solar')">☀️</button>
+      <button class="mini" onclick="send('/boiler_kueche_an')">🔛</button>
       <button class="mini" onclick="send('/boiler_kueche_aufheizen')">🔥</button>
       <button class="mini" onclick="openSchedule('kueche', 'Küche')">⏱</button>
     </div>
   </div>
 
   <div class="top" style="margin-top:10px;">
-    <button onclick="send('/boiler_status_24h')">24h Status</button>
-    <button onclick="send('/boiler_status_alle')">Alles melden</button>
-    <button onclick="send('/boiler_status_nein')">Stumm</button>
-    <button onclick="send('/hilfe')">Hilfe</button>
+    <button onclick="send('/boiler_status_24h')">24h</button>
+    <button onclick="send('/boiler_status_alle')">Alle</button>
+    <button onclick="send('/boiler_status_nein')">Still</button>
+    <button onclick="send('/hilfe')">?</button>
   </div>
 
-  <div class="footer">
-    Tipp: ⏱ öffnet Zeit/Dauer-Auswahl.
+  <div class="legend">
+    <b>Symbole:</b><br>
+    📊 Status · ⏹ AUS · ☀️ SOLAR · 🔛 AN · 🔥 Aufheizen · ⏱ Zeit/Dauer<br>
+    ☀️☀️ / 🔛🔛 / ⏹⏹ = global für alle Boiler
   </div>
 
   <div class="overlay" id="overlay">
@@ -293,8 +272,8 @@
       <div class="section">
         <div class="label">Aktion</div>
         <div class="seg">
-          <button id="actionHeat" class="active" onclick="setAction('aufheizen')">Aufheizen</button>
-          <button id="actionOn" onclick="setAction('stunden_an')">Stunden AN</button>
+          <button id="actionHeat" class="active" onclick="setAction('aufheizen')">🔥 Aufheizen</button>
+          <button id="actionOn" onclick="setAction('stunden_an')">🔛 Stunden AN</button>
         </div>
       </div>
 
@@ -325,8 +304,8 @@
       </div>
 
       <div class="modal-actions">
-        <button class="cancel" onclick="closeSchedule()">Abbrechen</button>
-        <button class="primary" onclick="submitSchedule()">Starten</button>
+        <button onclick="closeSchedule()">Abbrechen</button>
+        <button onclick="submitSchedule()">Senden</button>
       </div>
     </div>
   </div>
@@ -355,6 +334,8 @@
       tg.sendData(JSON.stringify({
         command: command
       }));
+
+      tg.close();
     }
 
     function openSchedule(key, label) {
@@ -388,13 +369,8 @@
     function changeHour(delta) {
       currentHour += delta;
 
-      if (currentHour < 0) {
-        currentHour = 23;
-      }
-
-      if (currentHour > 23) {
-        currentHour = 0;
-      }
+      if (currentHour < 0) currentHour = 23;
+      if (currentHour > 23) currentHour = 0;
 
       updateModal();
     }
@@ -402,20 +378,18 @@
     function changeDuration(delta) {
       currentDuration += delta;
 
-      if (currentDuration < 1) {
-        currentDuration = 1;
-      }
-
-      if (currentDuration > 24) {
-        currentDuration = 24;
-      }
+      if (currentDuration < 1) currentDuration = 1;
+      if (currentDuration > 24) currentDuration = 24;
 
       updateModal();
     }
 
     function updateModal() {
-      document.getElementById('hourValue').textContent = String(currentHour).padStart(2, '0') + ':00';
-      document.getElementById('durationValue').textContent = currentDuration + ' h';
+      document.getElementById('hourValue').textContent =
+        String(currentHour).padStart(2, '0') + ':00';
+
+      document.getElementById('durationValue').textContent =
+        currentDuration + ' h';
 
       document.getElementById('actionHeat').classList.toggle('active', currentAction === 'aufheizen');
       document.getElementById('actionOn').classList.toggle('active', currentAction === 'stunden_an');
@@ -443,7 +417,6 @@
       }
 
       send(cmd);
-      closeSchedule();
     }
   </script>
 </body>
