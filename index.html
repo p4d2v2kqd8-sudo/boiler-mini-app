@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Boilersteuerung</title>
+  <title>Boiler Mini-App</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
   <style>
     :root {
       --bg: #101216;
@@ -14,6 +15,7 @@
       --muted: #a1a1aa;
       --border: #333a46;
       --active: #38bdf8;
+      --danger: #ef4444;
     }
 
     * {
@@ -22,28 +24,48 @@
 
     body {
       margin: 0;
-      padding: 10px;
+      padding: 12px;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg);
       color: var(--text);
-      font-size: 14px;
+      font-size: 15px;
     }
 
     h1 {
-      font-size: 18px;
-      margin: 4px 0 10px 0;
-      line-height: 1.2;
+      font-size: 20px;
+      margin: 2px 0 8px 0;
+    }
+
+    h2 {
+      font-size: 17px;
+      margin: 16px 0 8px 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      max-width: 460px;
+      margin: 0 auto;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 12px;
+      line-height: 1.4;
     }
 
     button {
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 8px 4px;
-      font-size: 14px;
+      border-radius: 12px;
+      padding: 10px 8px;
+      min-height: 42px;
+      font-size: 15px;
       font-weight: 650;
       color: var(--text);
       background: var(--button);
-      min-height: 36px;
     }
 
     button:active {
@@ -51,262 +73,225 @@
       opacity: 0.85;
     }
 
-    .top {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      margin-bottom: 10px;
+    button.active {
+      outline: 2px solid var(--active);
+      background: #0f2f3c;
     }
 
-    .panel {
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: 78px repeat(5, 1fr);
-      gap: 5px;
-      align-items: center;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 7px;
-    }
-
-    .name {
-      font-weight: 750;
-      font-size: 13px;
-      line-height: 1.1;
-    }
-
-    .small {
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    .mini {
-      min-height: 34px;
-      font-size: 16px;
-      padding: 6px 2px;
-    }
-
-    .legend {
-      margin-top: 10px;
-      padding: 9px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: var(--card);
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.45;
-    }
-
-    .legend b {
-      color: var(--text);
-      font-weight: 700;
-    }
-
-    .overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.72);
-      align-items: center;
-      justify-content: center;
-      padding: 14px;
-      z-index: 10;
-    }
-
-    .modal {
-      width: 100%;
-      max-width: 420px;
-      background: #171b22;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 14px;
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
-    }
-
-    .modal h2 {
-      margin: 0 0 10px 0;
-      font-size: 18px;
+    button.danger {
+      background: #3a1717;
+      border-color: #5f2424;
+      color: #fecaca;
     }
 
     .section {
-      margin: 10px 0;
+      margin-top: 12px;
     }
 
     .label {
       font-size: 12px;
       color: var(--muted);
-      margin-bottom: 5px;
+      margin-bottom: 6px;
     }
 
     .seg {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6px;
-    }
-
-    .seg button.active {
-      outline: 2px solid var(--active);
-      background: #0f2f3c;
+      gap: 7px;
     }
 
     .picker {
       display: grid;
-      grid-template-columns: 44px 1fr 44px;
-      gap: 6px;
+      grid-template-columns: 46px 1fr 46px;
+      gap: 7px;
       align-items: center;
     }
 
     .value {
       background: var(--button);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      min-height: 38px;
+      border-radius: 12px;
+      min-height: 42px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 17px;
-      font-weight: 750;
+      font-size: 18px;
+      font-weight: 800;
     }
 
-    .modal-actions {
+    .actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
-      margin-top: 12px;
+      margin-top: 16px;
     }
 
-    @media (max-width: 360px) {
-      body {
-        padding: 7px;
-      }
+    .full {
+      grid-column: 1 / -1;
+    }
 
-      .row {
-        grid-template-columns: 70px repeat(5, 1fr);
-        gap: 4px;
-        padding: 6px;
-      }
+    .primary {
+      background: #0f3b4d;
+      border-color: #1d6a88;
+    }
 
-      .mini {
-        font-size: 15px;
-      }
+    .help-row {
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      line-height: 1.35;
+    }
 
-      .name {
-        font-size: 12px;
-      }
+    .help-row:last-child {
+      border-bottom: 0;
+    }
+
+    .symbol {
+      font-weight: 800;
+      color: var(--text);
+      display: inline-block;
+      min-width: 72px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .current {
+      margin-top: 8px;
+      padding: 9px;
+      background: #111827;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
     }
   </style>
 </head>
 
 <body>
-  <h1>Boilersteuerung</h1>
-
-  <div class="top">
-    <button onclick="send('/boiler_status')">📊</button>
-    <button onclick="send('/boiler_solar')">☀️☀️</button>
-    <button onclick="send('/boiler_an')">🔛🔛</button>
-    <button onclick="send('/boiler_aus')">⏹⏹</button>
-  </div>
-
-  <div class="panel">
-    <div class="row">
-      <div>
-        <div class="name">Bad</div>
-        <div class="small">Boiler</div>
-      </div>
-      <button class="mini" onclick="send('/boiler_bad_aus')">⏹</button>
-      <button class="mini" onclick="send('/boiler_bad_solar')">☀️</button>
-      <button class="mini" onclick="send('/boiler_bad_an')">🔛</button>
-      <button class="mini" onclick="send('/boiler_bad_aufheizen')">🔥</button>
-      <button class="mini" onclick="openSchedule('bad', 'Bad')">⏱</button>
+  <div class="card" id="scheduleView">
+    <h1 id="title">Zeitfunktion</h1>
+    <div class="subtitle" id="subtitle">
+      Zeitfunktion setzen oder löschen.
     </div>
 
-    <div class="row">
-      <div>
-        <div class="name">Dusche</div>
-        <div class="small">Boiler</div>
-      </div>
-      <button class="mini" onclick="send('/boiler_dusche_aus')">⏹</button>
-      <button class="mini" onclick="send('/boiler_dusche_solar')">☀️</button>
-      <button class="mini" onclick="send('/boiler_dusche_an')">🔛</button>
-      <button class="mini" onclick="send('/boiler_dusche_aufheizen')">🔥</button>
-      <button class="mini" onclick="openSchedule('dusche', 'Dusche')">⏱</button>
+    <div class="current" id="currentState">
+      Aktuell: keine Zeitfunktion
     </div>
 
-    <div class="row">
-      <div>
-        <div class="name">Küche</div>
-        <div class="small">Boiler</div>
+    <div class="section">
+      <div class="label">Aktion</div>
+      <div class="seg">
+        <button id="actionHeat" onclick="setAction('heat')">⏱ Aufheizen</button>
+        <button id="actionDuration" onclick="setAction('duration')">⏳ Dauer AN</button>
       </div>
-      <button class="mini" onclick="send('/boiler_kueche_aus')">⏹</button>
-      <button class="mini" onclick="send('/boiler_kueche_solar')">☀️</button>
-      <button class="mini" onclick="send('/boiler_kueche_an')">🔛</button>
-      <button class="mini" onclick="send('/boiler_kueche_aufheizen')">🔥</button>
-      <button class="mini" onclick="openSchedule('kueche', 'Küche')">⏱</button>
+    </div>
+
+    <div class="section">
+      <div class="label">Uhrzeit</div>
+      <div class="picker">
+        <button onclick="changeHour(-1)">−</button>
+        <div class="value" id="hourValue">18:00</div>
+        <button onclick="changeHour(1)">+</button>
+      </div>
+    </div>
+
+    <div class="section" id="durationSection">
+      <div class="label">Dauer</div>
+      <div class="picker">
+        <button onclick="changeDuration(-1)">−</button>
+        <div class="value" id="durationValue">2 h</div>
+        <button onclick="changeDuration(1)">+</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="label">Wiederholung</div>
+      <div class="seg">
+        <button id="repeatOnce" onclick="setRepeat(false)">einmalig</button>
+        <button id="repeatDaily" onclick="setRepeat(true)">♾ täglich</button>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button onclick="closeApp()">Abbrechen</button>
+      <button class="primary" onclick="submitSchedule()">Setzen</button>
+      <button class="danger full" id="deleteButton" onclick="deleteSchedule()">Zeitfunktion löschen</button>
     </div>
   </div>
 
-  <div class="top" style="margin-top:10px;">
-    <button onclick="send('/boiler_status_24h')">24h</button>
-    <button onclick="send('/boiler_status_alle')">Alle</button>
-    <button onclick="send('/boiler_status_nein')">Still</button>
-    <button onclick="send('/hilfe')">?</button>
-  </div>
+  <div class="card hidden" id="helpView">
+    <h1>📖 Hilfe</h1>
+    <div class="subtitle">
+      Bedeutung der Telegram-Tasten.
+    </div>
 
-  <div class="legend">
-    <b>Symbole:</b><br>
-    📊 Status · ⏹ AUS · ☀️ SOLAR · 🔛 AN · 🔥 Aufheizen · ⏱ Zeit/Dauer<br>
-    ☀️☀️ / 🔛🔛 / ⏹⏹ = global für alle Boiler
-  </div>
+    <div class="help-row">
+      <span class="symbol">🚽</span> Boiler Bad
+    </div>
+    <div class="help-row">
+      <span class="symbol">🛁</span> Boiler Dusche
+    </div>
+    <div class="help-row">
+      <span class="symbol">🍽️</span> Boiler Küche
+    </div>
 
-  <div class="overlay" id="overlay">
-    <div class="modal">
-      <h2 id="modalTitle">Zeitfunktion</h2>
+    <h2>Betriebsmodus</h2>
+    <div class="help-row">
+      <span class="symbol">▶️</span> Boiler dauerhaft AN
+    </div>
+    <div class="help-row">
+      <span class="symbol">⏹</span> Boiler AUS
+    </div>
+    <div class="help-row">
+      <span class="symbol">☀️</span> SOLAR-Modus
+    </div>
+    <div class="help-row">
+      <span class="symbol">🔘 / ⚪️</span> aktiv / nicht aktiv beim Betriebsmodus
+    </div>
 
-      <div class="section">
-        <div class="label">Aktion</div>
-        <div class="seg">
-          <button id="actionHeat" class="active" onclick="setAction('aufheizen')">🔥 Aufheizen</button>
-          <button id="actionOn" onclick="setAction('stunden_an')">🔛 Stunden AN</button>
-        </div>
-      </div>
+    <h2>Aufheizen</h2>
+    <div class="help-row">
+      <span class="symbol">🔥</span> einmal aufheizen bis kein Strom mehr gezogen wird
+    </div>
+    <div class="help-row">
+      <span class="symbol">☑️ / ◻️</span> Aufheizen aktiv / nicht aktiv
+    </div>
 
-      <div class="section">
-        <div class="label">Uhrzeit</div>
-        <div class="picker">
-          <button onclick="changeHour(-1)">−</button>
-          <div class="value" id="hourValue">18:00</div>
-          <button onclick="changeHour(1)">+</button>
-        </div>
-      </div>
+    <h2>Zeitfunktion</h2>
+    <div class="help-row">
+      <span class="symbol">⏱ ◻️</span> keine Zeitfunktion
+    </div>
+    <div class="help-row">
+      <span class="symbol">⏱ 08:00</span> einmalig aufheizen
+    </div>
+    <div class="help-row">
+      <span class="symbol">♾ 08:00</span> täglich aufheizen
+    </div>
+    <div class="help-row">
+      <span class="symbol">⏳ 08:00</span> einmalig für Dauer AN
+    </div>
+    <div class="help-row">
+      <span class="symbol">🎛️ 08:00</span> täglich für Dauer AN
+    </div>
 
-      <div class="section" id="durationSection">
-        <div class="label">Dauer</div>
-        <div class="picker">
-          <button onclick="changeDuration(-1)">−</button>
-          <div class="value" id="durationValue">2 h</div>
-          <button onclick="changeDuration(1)">+</button>
-        </div>
-      </div>
+    <h2>Alle Boiler</h2>
+    <div class="help-row">
+      <span class="symbol">🔗 ▶️</span> alle Boiler AN
+    </div>
+    <div class="help-row">
+      <span class="symbol">🔗 ⏹</span> alle Boiler AUS
+    </div>
+    <div class="help-row">
+      <span class="symbol">🔗 ☀️</span> alle Boiler SOLAR
+    </div>
+    <div class="help-row">
+      <span class="symbol">📊 📲</span> Status anfordern
+    </div>
 
-      <div class="section">
-        <div class="label">Wiederholung</div>
-        <div class="seg">
-          <button id="repeatOnce" class="active" onclick="setRepeat(false)">Einmalig</button>
-          <button id="repeatAlways" onclick="setRepeat(true)">Täglich</button>
-        </div>
-      </div>
-
-      <div class="modal-actions">
-        <button onclick="closeSchedule()">Abbrechen</button>
-        <button onclick="submitSchedule()">Senden</button>
-      </div>
+    <div class="actions">
+      <button class="primary full" onclick="closeApp()">Schließen</button>
     </div>
   </div>
 
@@ -318,14 +303,44 @@
       tg.expand();
     }
 
-    let currentBoiler = 'bad';
-    let currentBoilerLabel = 'Bad';
-    let currentAction = 'aufheizen';
-    let currentHour = 18;
-    let currentDuration = 2;
-    let currentRepeat = false;
+    const params = new URLSearchParams(window.location.search);
 
-    function send(command) {
+    let view = params.get('view') || 'schedule';
+    let boiler = params.get('boiler') || 'bad';
+
+    let scheduled = params.get('scheduled') === '1';
+    let currentHour = parseInt(params.get('hour') || '18', 10);
+    let currentDuration = parseInt(params.get('durationHours') || '2', 10);
+    let repeatDaily = params.get('daily') === '1';
+    let action = params.get('duration') === '1' ? 'duration' : 'heat';
+
+    const boilerLabels = {
+      bad: '🚽 Bad',
+      dusche: '🛁 Dusche',
+      kueche: '🍽️ Küche'
+    };
+
+    function validBoiler(key) {
+      return key === 'bad' || key === 'dusche' || key === 'kueche';
+    }
+
+    if (!validBoiler(boiler)) {
+      boiler = 'bad';
+    }
+
+    if (isNaN(currentHour) || currentHour < 0 || currentHour > 23) {
+      currentHour = 18;
+    }
+
+    if (isNaN(currentDuration) || currentDuration < 1 || currentDuration > 24) {
+      currentDuration = 2;
+    }
+
+    function pad2(n) {
+      return n < 10 ? '0' + n : '' + n;
+    }
+
+    function sendCommand(command) {
       if (!tg) {
         alert(command);
         return;
@@ -335,35 +350,27 @@
         command: command
       }));
 
-      tg.close();
+      setTimeout(function () {
+        tg.close();
+      }, 250);
     }
 
-    function openSchedule(key, label) {
-      currentBoiler = key;
-      currentBoilerLabel = label;
-      currentAction = 'aufheizen';
-      currentHour = 18;
-      currentDuration = 2;
-      currentRepeat = false;
-
-      document.getElementById('modalTitle').textContent = label + ' Zeitfunktion';
-      updateModal();
-
-      document.getElementById('overlay').style.display = 'flex';
+    function closeApp() {
+      if (tg) {
+        tg.close();
+      } else {
+        window.close();
+      }
     }
 
-    function closeSchedule() {
-      document.getElementById('overlay').style.display = 'none';
+    function setAction(nextAction) {
+      action = nextAction;
+      renderSchedule();
     }
 
-    function setAction(action) {
-      currentAction = action;
-      updateModal();
-    }
-
-    function setRepeat(repeat) {
-      currentRepeat = repeat;
-      updateModal();
+    function setRepeat(value) {
+      repeatDaily = value === true;
+      renderSchedule();
     }
 
     function changeHour(delta) {
@@ -372,7 +379,7 @@
       if (currentHour < 0) currentHour = 23;
       if (currentHour > 23) currentHour = 0;
 
-      updateModal();
+      renderSchedule();
     }
 
     function changeDuration(delta) {
@@ -381,42 +388,106 @@
       if (currentDuration < 1) currentDuration = 1;
       if (currentDuration > 24) currentDuration = 24;
 
-      updateModal();
+      renderSchedule();
     }
 
-    function updateModal() {
+    function currentTypeText() {
+      if (!scheduled) {
+        return 'keine Zeitfunktion';
+      }
+
+      if (repeatDaily && action === 'duration') {
+        return '🎛️ täglich für Dauer AN';
+      }
+
+      if (repeatDaily) {
+        return '♾ täglich aufheizen';
+      }
+
+      if (action === 'duration') {
+        return '⏳ einmalig für Dauer AN';
+      }
+
+      return '⏱ einmalig aufheizen';
+    }
+
+    function renderSchedule() {
+      document.getElementById('title').textContent =
+        boilerLabels[boiler] + ' Zeitfunktion';
+
+      document.getElementById('subtitle').textContent =
+        'Zeitfunktion setzen oder löschen.';
+
       document.getElementById('hourValue').textContent =
-        String(currentHour).padStart(2, '0') + ':00';
+        pad2(currentHour) + ':00';
 
       document.getElementById('durationValue').textContent =
         currentDuration + ' h';
 
-      document.getElementById('actionHeat').classList.toggle('active', currentAction === 'aufheizen');
-      document.getElementById('actionOn').classList.toggle('active', currentAction === 'stunden_an');
+      document.getElementById('actionHeat').classList.toggle('active', action === 'heat');
+      document.getElementById('actionDuration').classList.toggle('active', action === 'duration');
 
-      document.getElementById('repeatOnce').classList.toggle('active', currentRepeat === false);
-      document.getElementById('repeatAlways').classList.toggle('active', currentRepeat === true);
+      document.getElementById('repeatOnce').classList.toggle('active', repeatDaily === false);
+      document.getElementById('repeatDaily').classList.toggle('active', repeatDaily === true);
 
       document.getElementById('durationSection').style.display =
-        currentAction === 'stunden_an' ? 'block' : 'none';
+        action === 'duration' ? 'block' : 'none';
+
+      document.getElementById('deleteButton').style.display =
+        scheduled ? 'block' : 'none';
+
+      let state = 'Aktuell: ';
+
+      if (!scheduled) {
+        state += 'keine Zeitfunktion ◻️';
+      } else {
+        state += currentTypeText() + ' um ' + pad2(currentHour) + ':00';
+
+        if (action === 'duration') {
+          state += ' für ' + currentDuration + ' h';
+        }
+      }
+
+      document.getElementById('currentState').textContent = state;
     }
 
     function submitSchedule() {
-      let cmd = '/boiler_' + currentBoiler + '_';
+      let cmd = '/boiler_' + boiler + '_';
 
-      if (currentRepeat) {
+      if (repeatDaily) {
         cmd += 'immer_';
       }
 
       cmd += currentHour + '_uhr_';
 
-      if (currentAction === 'aufheizen') {
-        cmd += 'aufheizen';
-      } else {
+      if (action === 'duration') {
         cmd += currentDuration + '_stunden_an';
+      } else {
+        cmd += 'aufheizen';
       }
 
-      send(cmd);
+      sendCommand(cmd);
+    }
+
+    function deleteSchedule() {
+      sendCommand('/boiler_' + boiler + '_zeit_aus');
+    }
+
+    function showHelp() {
+      document.getElementById('scheduleView').classList.add('hidden');
+      document.getElementById('helpView').classList.remove('hidden');
+    }
+
+    function showSchedule() {
+      document.getElementById('helpView').classList.add('hidden');
+      document.getElementById('scheduleView').classList.remove('hidden');
+      renderSchedule();
+    }
+
+    if (view === 'help') {
+      showHelp();
+    } else {
+      showSchedule();
     }
   </script>
 </body>
